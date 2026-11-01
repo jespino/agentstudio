@@ -43,14 +43,18 @@ export interface SourceEditorProps {
   /** Selects a line and scrolls to it (a new object each time). */
   reveal?: { line: number } | null;
   className?: string;
+  /** Keeps the editor's text when the source is replaced from outside (unapplied edits). */
+  keepEdits?: () => boolean;
+  /** The CodeMirror view, once created (null when destroyed). */
+  onView?: (view: EditorView | null) => void;
 }
 
 /** A CodeMirror editor kept in step with a source that also changes on disk. */
-export function SourceEditor({ value, revision, onEdit, extensions, marks, reveal, className = 'source-editor' }: SourceEditorProps) {
+export function SourceEditor({ value, revision, onEdit, extensions, marks, reveal, className = 'source-editor', keepEdits, onView }: SourceEditorProps) {
   const host = useRef<HTMLDivElement>(null);
   const view = useRef<EditorView | null>(null);
-  const latest = useRef({ value, onEdit });
-  latest.current = { value, onEdit };
+  const latest = useRef({ value, onEdit, keepEdits });
+  latest.current = { value, onEdit, keepEdits };
 
   useEffect(() => {
     view.current = new EditorView({
@@ -66,7 +70,9 @@ export function SourceEditor({ value, revision, onEdit, extensions, marks, revea
       }),
       parent: host.current!,
     });
+    onView?.(view.current);
     return () => {
+      onView?.(null);
       view.current?.destroy();
       view.current = null;
     };
@@ -76,7 +82,7 @@ export function SourceEditor({ value, revision, onEdit, extensions, marks, revea
   useEffect(() => {
     const v = view.current;
     const source = latest.current.value;
-    if (!v || v.state.doc.toString() === source) return;
+    if (!v || v.state.doc.toString() === source || latest.current.keepEdits?.()) return;
     v.dispatch({ changes: { from: 0, to: v.state.doc.length, insert: source }, annotations: external.of(true) });
   }, [revision]);
 

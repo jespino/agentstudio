@@ -21,11 +21,15 @@ brings the rest, the same everywhere:
   writes, because the API can start programs;
 - saving what the studio produces (an export, a mesh) through the native save
   dialog (`Base.SaveAs`, `/__studio/save`), or a download in a browser;
+- the source panel: the project's text in a CodeMirror editor kept in step
+  with the disk (the agent's edits appear live), saved as you type or applied
+  explicitly (Apply / Ctrl+S, Revert), with a file chooser for folder
+  projects, the compile error and its line, a toolbar button and Ctrl+2;
 - the UI pieces: the backend transport (Wails or HTTP), the agent panel and
   "ask the agent to fix it", the welcome screen, the project menu, the folder
-  browser, a CodeMirror editor kept in step with the disk (with debounced
-  saving and the project's events), syntax colors, toasts, the split layout,
-  and the base styles (layout, buttons, panels) every studio themes.
+  browser, debounced saving and the project's events, syntax colors, toasts,
+  the split layout, and the base styles (layout, buttons, panels) every
+  studio themes.
 
 ## Go packages
 
@@ -86,6 +90,13 @@ export const api = { ...workspaceApi(backend.call), myMethod: () => backend.call
 configureStudio({ backend, id: 'kino', notify: showToast, currentDir: () => store.project?.dir });
 ```
 
+The source panel is `SourcePanel` (`onEdit` saves as you type, `onApply`
+applies explicitly, `files` adds a chooser), shown with `SourceButton` /
+Ctrl+2 or `toggleSource()`, and `revealLine(n)` opens it at a line; for
+folder projects, `Base` lists, reads and writes the project's files
+(`SourceFiles`, `ReadSource`, `WriteSource`) and `SourceChanged` sends the
+agent's edits to the panel.
+
 Besides the components: `toast()` with `<Toaster />`, `askAgent()` and
 `useAskAgent()` (send an error to the running agent), `saveFile()`,
 `createSourceSaver()` and `onWorkspace()` for one-file projects, and
@@ -107,8 +118,8 @@ export default defineConfig({ server: { proxy: studioProxy({ backend: 'http://12
 ## Using it
 
 ```sh
-go get github.com/jespino/agentstudio@v0.2.0
-npm install github:jespino/agentstudio#v0.2.0   # with allow-git=root in the project's .npmrc (npm 12)
+go get github.com/jespino/agentstudio@v0.3.0
+npm install github:jespino/agentstudio#v0.3.0   # with allow-git=root in the project's .npmrc (npm 12)
 ```
 
 To work on agentstudio and a studio together, point the studio at the local

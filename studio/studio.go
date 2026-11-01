@@ -103,7 +103,8 @@ type Base struct {
 	file    string // the open project file ("" for folder projects)
 	toolDir string // holds the Tool link put first on the agent's PATH
 	tooled  bool
-	saveDir string // where SaveAs saved last
+	saveDir string            // where SaveAs saved last
+	sources map[string]string // project files as the UI last read or wrote them
 }
 
 // New creates the shared backend.
@@ -116,7 +117,7 @@ func New(cfg Config) *Base {
 // HiddenMethods are the exported methods that are not part of the API (see
 // rpc.Hider). A service adding its own includes these.
 func (b *Base) HiddenMethods() []string {
-	return []string{"Emit", "Dialogs", "SetProject", "Project", "Resolve", "Config", "SetEmitter", "SetDialogs", "SaveAs", "StudioHTTP"}
+	return []string{"Emit", "Dialogs", "SetProject", "Project", "Resolve", "Config", "SetEmitter", "SetDialogs", "SaveAs", "StudioHTTP", "SourceChanged"}
 }
 
 // Config returns the configuration.
@@ -173,6 +174,9 @@ func (b *Base) SetProject(dir, file string) {
 	b.mu.Lock()
 	switching := b.dir != dir || b.file != file
 	b.dir, b.file = dir, file
+	if switching {
+		b.sources = nil
+	}
 	b.mu.Unlock()
 	if switching {
 		b.terms.StopAll()

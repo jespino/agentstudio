@@ -11,21 +11,35 @@ export interface SourceSaver {
   schedule: (text: string) => void;
   /** drops a pending save (the text was replaced from disk) */
   cancel: () => void;
+  /** saves a pending text now */
+  flush: () => void;
 }
 
-/** Debounced SaveSource; a failure shows a toast. */
-export function createSourceSaver(delay = 400): SourceSaver {
+/**
+ * Debounced saving; a failure shows a toast. save defaults to the
+ * Workspace's SaveSource (pass one for other files: WriteSource(path, text)).
+ */
+export function createSourceSaver(delay = 400, save?: (text: string) => Promise<unknown>): SourceSaver {
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let pending: string | null = null;
+  const run = () => {
+    clearTimeout(timer);
+    if (pending === null) return;
+    const text = pending;
+    pending = null;
+    (save ? save(text) : studioConfig().backend.call('SaveSource', text)).catch((e) => toast(`Could not save: ${errorText(e)}`));
+  };
   return {
     schedule(text) {
       clearTimeout(timer);
-      timer = setTimeout(() => {
-        studioConfig()
-          .backend.call('SaveSource', text)
-          .catch((e) => toast(`Could not save: ${errorText(e)}`));
-      }, delay);
+      pending = text;
+      timer = setTimeout(run, delay);
     },
-    cancel: () => clearTimeout(timer),
+    cancel: () => {
+      clearTimeout(timer);
+      pending = null;
+    },
+    flush: run,
   };
 }
 

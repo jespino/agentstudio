@@ -421,3 +421,48 @@ func TestSaveAs(t *testing.T) {
 		t.Fatalf("dialog starts %v, want %v", starts, want)
 	}
 }
+
+func TestSourceFiles(t *testing.T) {
+	b := New(Config{ID: "demo", Ext: ".demo", FolderProjects: true, RecentFile: filepath.Join(t.TempDir(), "r.json")})
+	ev := &events{}
+	b.SetEmitter(ev.emit)
+	if _, err := b.SourceFiles(); err == nil {
+		t.Fatal("listed without a project")
+	}
+	dir := t.TempDir()
+	for _, f := range []string{"a.demo", "parts/b.demo", ".hidden/c.demo", "node_modules/d.demo", "notes.txt"} {
+		os.MkdirAll(filepath.Join(dir, filepath.Dir(f)), 0o755)
+		os.WriteFile(filepath.Join(dir, f), []byte("x "+f), 0o644)
+	}
+	b.SetProject(dir, "")
+	files, err := b.SourceFiles()
+	if err != nil || !slices.Equal(files, []string{"a.demo", "parts/b.demo"}) {
+		t.Fatalf("files %v %v", files, err)
+	}
+	for _, bad := range []string{"../x.demo", "/etc/passwd", "notes.txt", ""} {
+		if _, err := b.ReadSource(bad); err == nil {
+			t.Errorf("read %q", bad)
+		}
+	}
+	if s, err := b.ReadSource("parts/b.demo"); err != nil || s != "x parts/b.demo" {
+		t.Fatalf("read %q %v", s, err)
+	}
+	// Our own write is not echoed; an outside edit of a file read is.
+	if err := b.WriteSource("parts/b.demo", "mine"); err != nil {
+		t.Fatal(err)
+	}
+	b.SourceChanged(filepath.Join(dir, "parts", "b.demo"))
+	os.WriteFile(filepath.Join(dir, "parts", "b.demo"), []byte("agent"), 0o644)
+	b.SourceChanged(filepath.Join(dir, "parts", "b.demo"))
+	b.SourceChanged(filepath.Join(dir, "a.demo")) // never read: nothing to send
+	e, _ := ev.wait(t, EventSource, 0)
+	if ch := e.data.(SourceChange); ch.Path != filepath.Join(dir, "parts", "b.demo") || ch.Source != "agent" {
+		t.Fatalf("change %+v", ch)
+	}
+	ev.mu.Lock()
+	n := len(ev.list)
+	ev.mu.Unlock()
+	if n != 1 {
+		t.Fatalf("%d events, want 1", n)
+	}
+}

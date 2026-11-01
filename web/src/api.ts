@@ -95,6 +95,10 @@ export function baseApi(call: Call) {
     terminalBuffer: (id: string) => call<string>('TerminalBuffer', id),
     stopTerminal: (id: string) => call<void>('StopTerminal', id),
     terminals: () => call<TerminalInfo[] | null>('Terminals'),
+    /** the project's source files (relative paths), for folder projects */
+    sourceFiles: () => call<string[]>('SourceFiles'),
+    readSource: (path: string) => call<string>('ReadSource', path),
+    writeSource: (path: string, text: string) => call<void>('WriteSource', path, text),
   };
 }
 

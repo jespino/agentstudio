@@ -212,6 +212,23 @@ button.link:hover:not(:disabled) {
   background: color-mix(in srgb, var(--warn, var(--accent)) 14%, transparent);
 }
 
+/* SourcePanel's compile error, above the editor */
+.source-error {
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--danger) 12%, var(--panel));
+  color: var(--danger);
+  text-align: left;
+  padding: 5px 10px;
+  font-family: ui-monospace, 'JetBrains Mono', monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+.source .panel-header select {
+  max-width: 40%;
+}
+
 /* Splitters (react-resizable-panels) */
 .sep-v {
   width: 4px;

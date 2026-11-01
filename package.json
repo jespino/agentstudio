@@ -1,6 +1,6 @@
 {
   "name": "@jespino/agentstudio",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "The frontend of an agent studio: backend transport, agent terminal, project screens, source editor and layout",
   "license": "MIT",
   "type": "module",

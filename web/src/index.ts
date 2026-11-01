@@ -37,6 +37,8 @@ export { Welcome, type TemplateGroup, type WelcomeProps } from './project/Welcom
 export { ProjectPicker } from './project/ProjectPicker';
 export { ProjectMenu, type ProjectMenuProps } from './project/ProjectMenu';
 export { SourceEditor, type LineMark, type SourceEditorProps } from './source/SourceEditor';
+export { SourcePanel, type SourcePanelProps, type SourceProblem } from './source/SourcePanel';
+export { revealLine, SourceButton, toggleSource, useSourceOpen } from './source/state';
 export { StudioLayout, type StudioLayoutProps } from './layout/StudioLayout';
 export { askAgent, useAskAgent, type AskAgent } from './terminal/ask';
 export { dismissToast, toast, Toaster } from './toast';

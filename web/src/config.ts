@@ -29,6 +29,8 @@ export interface StudioConfig {
   canOpen?: (listing: DirListing) => boolean;
   /** The open project's folder: the folder browser starts next to it. */
   currentDir?: () => string | undefined;
+  /** Whether the source panel shows the first time (the user's choice is kept). Default: hidden. */
+  sourceOpen?: boolean;
   /** Shows an error message. Default: a toast (render <Toaster />). */
   notify?: (message: string) => void;
 }

@@ -35,6 +35,12 @@ it('saves the source once typing stops, and not after a replace', async () => {
   saver.cancel();
   await vi.advanceTimersByTimeAsync(1000);
   expect(call).toHaveBeenCalledTimes(1);
+  // flush saves the pending text at once, and only once
+  saver.schedule('abcd');
+  saver.flush();
+  expect(call).toHaveBeenLastCalledWith('SaveSource', 'abcd');
+  await vi.advanceTimersByTimeAsync(1000);
+  expect(call).toHaveBeenCalledTimes(2);
 });
 
 it('passes on the project and only outside edits of its file', () => {
