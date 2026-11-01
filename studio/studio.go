@@ -103,6 +103,7 @@ type Base struct {
 	file    string // the open project file ("" for folder projects)
 	toolDir string // holds the Tool link put first on the agent's PATH
 	tooled  bool
+	saveDir string // where SaveAs saved last
 }
 
 // New creates the shared backend.
@@ -115,7 +116,7 @@ func New(cfg Config) *Base {
 // HiddenMethods are the exported methods that are not part of the API (see
 // rpc.Hider). A service adding its own includes these.
 func (b *Base) HiddenMethods() []string {
-	return []string{"Emit", "Dialogs", "SetProject", "Project", "Resolve", "Config", "SetEmitter", "SetDialogs"}
+	return []string{"Emit", "Dialogs", "SetProject", "Project", "Resolve", "Config", "SetEmitter", "SetDialogs", "SaveAs", "StudioHTTP"}
 }
 
 // Config returns the configuration.

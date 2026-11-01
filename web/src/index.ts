@@ -32,9 +32,14 @@ export {
   typeInTerminal,
 } from './terminal/bus';
 export { TerminalPanel, type TerminalPanelProps } from './terminal/TerminalPanel';
-export { closeProject, createProject, newProjectFlow, openProject, openProjectFlow } from './project/actions';
+export { closeProject, createProject, hasNativeDialogs, newProjectFlow, openProject, openProjectFlow } from './project/actions';
 export { Welcome, type TemplateGroup, type WelcomeProps } from './project/Welcome';
 export { ProjectPicker } from './project/ProjectPicker';
 export { ProjectMenu, type ProjectMenuProps } from './project/ProjectMenu';
 export { SourceEditor, type LineMark, type SourceEditorProps } from './source/SourceEditor';
 export { StudioLayout, type StudioLayoutProps } from './layout/StudioLayout';
+export { askAgent, useAskAgent, type AskAgent } from './terminal/ask';
+export { dismissToast, toast, Toaster } from './toast';
+export { saveFile } from './save';
+export { createSourceSaver, onWorkspace, type SourceSaver, type WorkspaceHandlers } from './sync';
+export { studioHighlight, studioHighlightStyle } from './source/highlight';

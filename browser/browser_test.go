@@ -69,4 +69,15 @@ func TestListen(t *testing.T) {
 	if err := json.NewDecoder(r.Body).Decode(&out); err != nil || len(out.Result) == 0 || out.Result[0]["id"] != "claude" {
 		t.Fatalf("Harnesses: %v %v", out, err)
 	}
+
+	// Base's endpoints: saving needs native dialogs, which a browser has not.
+	req, _ = http.NewRequest(http.MethodPost, "http://"+u.Host+"/__studio/save?name=x.txt", strings.NewReader("hello"))
+	r, err = c.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	r.Body.Close()
+	if r.StatusCode != http.StatusNotImplemented {
+		t.Fatalf("save without dialogs: %d", r.StatusCode)
+	}
 }

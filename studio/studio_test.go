@@ -374,3 +374,50 @@ func TestRPCSurface(t *testing.T) {
 		}
 	}
 }
+
+// saveDialog answers the save dialog with the next path of answers.
+type saveDialog struct {
+	answers []string
+	starts  *[]string
+}
+
+func (saveDialog) ChooseDirectory(string, string, bool) (string, error)   { return "", nil }
+func (saveDialog) ChooseFiles(string, string, []Filter) ([]string, error) { return nil, nil }
+func (d *saveDialog) SaveFile(title, start, name string) (string, error) {
+	*d.starts = append(*d.starts, start+"|"+name)
+	a := d.answers[0]
+	d.answers = d.answers[1:]
+	return a, nil
+}
+
+func TestSaveAs(t *testing.T) {
+	w, _ := newWorkspace(t, WorkspaceOptions{})
+	if _, err := w.SaveAs("Save", "", "x.pdf", nil); err == nil {
+		t.Fatal("saved without native dialogs")
+	}
+	proj := t.TempDir()
+	if _, err := w.NewProject(proj, "", "x"); err != nil {
+		t.Fatal(err)
+	}
+	out := t.TempDir()
+	var starts []string
+	w.SetDialogs(&saveDialog{answers: []string{filepath.Join(out, "trip"), "", filepath.Join(out, "b.pdf")}, starts: &starts})
+	// The dialog starts in the project; the suggested extension is added.
+	if p, err := w.SaveAs("Export", "", "trip.pdf", []byte("pdf")); err != nil || p != filepath.Join(out, "trip.pdf") {
+		t.Fatalf("first save: %q %v", p, err)
+	}
+	if b, _ := os.ReadFile(filepath.Join(out, "trip.pdf")); string(b) != "pdf" {
+		t.Fatalf("saved %q", b)
+	}
+	// Cancelled: nothing written, no error.
+	if p, err := w.SaveAs("Export", "", "c.pdf", []byte("x")); p != "" || err != nil {
+		t.Fatalf("cancel: %q %v", p, err)
+	}
+	// Then where the last file went.
+	if _, err := w.SaveAs("Export", "/elsewhere", "b.pdf", []byte("b")); err != nil {
+		t.Fatal(err)
+	}
+	if want := []string{proj + "|trip.pdf", out + "|c.pdf", out + "|b.pdf"}; !slices.Equal(starts, want) {
+		t.Fatalf("dialog starts %v, want %v", starts, want)
+	}
+}

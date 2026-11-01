@@ -19,9 +19,13 @@ brings the rest, the same everywhere:
 - the desktop shell (`app [project]`) and the same UI in a browser
   (`app serve`), with a session token, its own `Host` only and same-origin
   writes, because the API can start programs;
-- the UI pieces: the backend transport (Wails or HTTP), the agent panel, the
-  welcome screen, the project menu, the folder browser, a CodeMirror editor
-  kept in step with the disk, and the split layout.
+- saving what the studio produces (an export, a mesh) through the native save
+  dialog (`Base.SaveAs`, `/__studio/save`), or a download in a browser;
+- the UI pieces: the backend transport (Wails or HTTP), the agent panel and
+  "ask the agent to fix it", the welcome screen, the project menu, the folder
+  browser, a CodeMirror editor kept in step with the disk (with debounced
+  saving and the project's events), syntax colors, toasts, the split layout,
+  and the base styles (layout, buttons, panels) every studio themes.
 
 ## Go packages
 
@@ -82,9 +86,16 @@ export const api = { ...workspaceApi(backend.call), myMethod: () => backend.call
 configureStudio({ backend, id: 'kino', notify: showToast, currentDir: () => store.project?.dir });
 ```
 
-The components use the studio's theme variables (`--bg`, `--panel`,
-`--panel-2`, `--border`, `--text`, `--text-muted`, `--accent`, `--danger`,
-`--term-bg`, `--term-fg`, `--term-selection`). For `app serve` behind Vite,
+Besides the components: `toast()` with `<Toaster />`, `askAgent()` and
+`useAskAgent()` (send an error to the running agent), `saveFile()`,
+`createSourceSaver()` and `onWorkspace()` for one-file projects, and
+`studioHighlight` for a language's tokens.
+
+`styles.css` has a default theme and the base styles (layout, buttons,
+panels, the source editor); a studio's stylesheet, imported after it, sets
+its own theme variables (`--bg`, `--panel`, `--panel-2`, `--border`, `--text`,
+`--text-muted`, `--accent`, `--danger`, `--warn`, `--term-bg`, `--term-fg`,
+`--term-selection`, the `--syn-*` colors) and overrides what it wants. For `app serve` behind Vite,
 `@jespino/agentstudio/vite` has the proxy entries; both sides read the session
 token from `AGENTSTUDIO_TOKEN`:
 
@@ -96,8 +107,8 @@ export default defineConfig({ server: { proxy: studioProxy({ backend: 'http://12
 ## Using it
 
 ```sh
-go get github.com/jespino/agentstudio@v0.1.0
-npm install github:jespino/agentstudio#v0.1.0
+go get github.com/jespino/agentstudio@v0.2.0
+npm install github:jespino/agentstudio#v0.2.0   # with allow-git=root in the project's .npmrc (npm 12)
 ```
 
 To work on agentstudio and a studio together, point the studio at the local

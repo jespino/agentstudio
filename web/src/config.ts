@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 import { baseApi, type BaseApi, type DirListing, type Template } from './api';
 import { errorText, type Backend } from './backend';
+import { toast } from './toast';
 
 export interface StudioConfig {
   backend: Backend;
@@ -28,7 +29,7 @@ export interface StudioConfig {
   canOpen?: (listing: DirListing) => boolean;
   /** The open project's folder: the folder browser starts next to it. */
   currentDir?: () => string | undefined;
-  /** Shows an error message (a toast). Default: console.error. */
+  /** Shows an error message. Default: a toast (render <Toaster />). */
   notify?: (message: string) => void;
 }
 
@@ -68,7 +69,7 @@ export function notify(e: unknown) {
   const msg = errorText(e);
   const n = config?.notify;
   if (n) n(msg);
-  else console.error(msg);
+  else toast(msg);
 }
 
 /** localStorage, which a private window or a sandbox may refuse. */

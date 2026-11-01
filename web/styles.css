@@ -1,9 +1,216 @@
 /*
- * The shared components' styles. They use the studio's theme variables:
- *   --bg --panel --panel-2 --border --text --text-muted --accent --danger
- *   --term-bg --term-fg (and --term-selection, read by the terminal)
- * Import this before the studio's own stylesheet, which defines them.
+ * agentstudio: the base styles of a studio (layout, buttons, panels, the
+ * source editor) and of the shared components. Everything reads the theme
+ * variables below; a studio sets its own in its stylesheet, imported after
+ * this one, and overrides any rule the same way.
  */
+:root {
+  --bg: #f4f5f7;
+  --panel: #ffffff;
+  --panel-2: #f0f1f4;
+  --border: #dcdfe5;
+  --text: #1d2026;
+  --text-muted: #6b7280;
+  --accent: #3b74d9;
+  --accent-text: #ffffff;
+  --danger: #c2413b;
+  --term-bg: #1b1e23;
+  --term-fg: #e6e8eb;
+  --syn-keyword: #8e44ad;
+  --syn-comment: #8a8f98;
+  --syn-string: #b5651d;
+  --syn-number: #1f7a8c;
+  --syn-atom: #c0392b;
+  --syn-property: #2c6fbb;
+  --syn-definition: #1d2026;
+  --syn-type: #16804b;
+  --syn-function: #9a5b00;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d0f13;
+    --panel: #15181d;
+    --panel-2: #1d2128;
+    --border: #2a2f37;
+    --text: #e6e8eb;
+    --text-muted: #8b919b;
+    --accent: #6ea8fe;
+    --accent-text: #0b1220;
+    --danger: #ef6b65;
+    --term-bg: #0f1114;
+    --term-fg: #e6e8eb;
+    --syn-keyword: #c792ea;
+    --syn-comment: #6b7380;
+    --syn-string: #e2a76f;
+    --syn-number: #66c2cd;
+    --syn-atom: #f07178;
+    --syn-property: #82aaff;
+    --syn-definition: #e6e8eb;
+    --syn-type: #7fd88f;
+    --syn-function: #ffcb6b;
+  }
+}
+
+/* Base */
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+  overflow: hidden;
+}
+button,
+select {
+  font: inherit;
+  color: var(--text);
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+button.danger {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+button.small {
+  padding: 1px 7px;
+  font-size: 12px;
+}
+button.big {
+  padding: 8px 18px;
+  font-size: 14px;
+}
+button.link {
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  text-align: left;
+}
+button.link:hover:not(:disabled) {
+  text-decoration: underline;
+}
+.small {
+  font-size: 12px;
+}
+.muted {
+  color: var(--text-muted);
+}
+.spacer {
+  flex: 1;
+}
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.error {
+  color: var(--danger);
+  padding: 4px 10px;
+}
+.danger-text {
+  color: var(--danger);
+}
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+.toolbar .sep,
+.panel-header .sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+}
+.banner {
+  border-bottom: 1px solid var(--border);
+}
+.main {
+  flex: 1;
+  min-height: 0;
+}
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--panel);
+  min-width: 0;
+  min-height: 0;
+}
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--border);
+  min-height: 34px;
+}
+.panel-title {
+  font-weight: 600;
+}
+.source-editor {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.source-editor .cm-editor {
+  height: 100%;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 13px;
+}
+.source-editor .cm-scroller {
+  font-family: ui-monospace, 'JetBrains Mono', 'Fira Code', monospace;
+}
+.source-editor .cm-gutters {
+  background: var(--panel-2);
+  border-right: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.source-editor .cm-activeLine,
+.source-editor .cm-activeLineGutter {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.source-editor .cm-cursor {
+  border-left-color: var(--text);
+}
+.source-editor .cm-selectionBackground,
+.source-editor .cm-focused .cm-selectionBackground {
+  background: color-mix(in srgb, var(--accent) 30%, transparent) !important;
+}
+
+/* the lines SourceEditor marks (--warn: a warning color, the accent by default) */
+.source-editor .cm-error-line {
+  background: color-mix(in srgb, var(--danger) 18%, transparent);
+}
+.source-editor .cm-warning-line {
+  background: color-mix(in srgb, var(--warn, var(--accent)) 14%, transparent);
+}
 
 /* Splitters (react-resizable-panels) */
 .sep-v {

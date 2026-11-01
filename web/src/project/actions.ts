@@ -4,7 +4,8 @@ import type { Template } from '../api';
 import { label, notify, studioConfig, useStudioUI } from '../config';
 
 let native: Promise<boolean> | null = null;
-const hasNative = () => (native ??= studioConfig().api.hasNativeDialogs().catch(() => false));
+/** Whether the shell has native dialogs (the desktop app). */
+export const hasNativeDialogs = () => (native ??= studioConfig().api.hasNativeDialogs().catch(() => false));
 
 async function guarded(fn: () => Promise<unknown>) {
   try {
@@ -37,7 +38,7 @@ export function createProject(dir: string, name = '') {
 /** "Open project…": a native folder dialog, or the in-app browser. */
 export function openProjectFlow() {
   return guarded(async () => {
-    if (await hasNative()) {
+    if (await hasNativeDialogs()) {
       const dir = await studioConfig().api.chooseDirectory(studioConfig().openTitle ?? label('Open a', ' folder'), false);
       if (dir) await openProject(dir);
     } else {
@@ -50,7 +51,7 @@ export function openProjectFlow() {
 export function newProjectFlow(template: Template | null = null) {
   useStudioUI.setState({ template });
   return guarded(async () => {
-    if (await hasNative()) {
+    if (await hasNativeDialogs()) {
       const c = studioConfig();
       const title = c.newTitle
         ? c.newTitle(template)

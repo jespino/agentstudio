@@ -26,6 +26,12 @@ type Service interface {
 	Shutdown()
 }
 
+// studioHandler is a service embedding a studio.Base: its own endpoints
+// (saving files, …) are served under studio.StudioRoute.
+type studioHandler interface {
+	StudioHTTP() http.Handler
+}
+
 // Options describe what is served.
 type Options struct {
 	// ID is the program's short name (it prefixes the session cookie).
@@ -57,6 +63,9 @@ func Listen(svc Service, o Options, addr string) (*rpc.Server, string, error) {
 		for _, p := range o.Routes {
 			routes[p] = h
 		}
+	}
+	if sh, ok := svc.(studioHandler); ok {
+		routes[studio.StudioRoute] = sh.StudioHTTP()
 	}
 	var static http.Handler
 	if o.Assets != nil {

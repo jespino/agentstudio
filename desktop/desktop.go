@@ -72,17 +72,27 @@ func Main[T any, S interface {
 }
 
 func routes(svc Service, o Options, next http.Handler) http.Handler {
-	if len(o.Routes) == 0 {
-		return next
+	var own http.Handler
+	if len(o.Routes) > 0 {
+		h, ok := svc.(http.Handler)
+		if !ok {
+			log.Fatalf("desktop: Routes are set but %T is not an http.Handler", svc)
+		}
+		own = h
 	}
-	h, ok := svc.(http.Handler)
-	if !ok {
-		log.Fatalf("desktop: Routes are set but %T is not an http.Handler", svc)
+	// Base's endpoints (saving files, …)
+	var shared http.Handler
+	if sh, ok := svc.(interface{ StudioHTTP() http.Handler }); ok {
+		shared = sh.StudioHTTP()
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if shared != nil && strings.HasPrefix(r.URL.Path, studio.StudioRoute) {
+			shared.ServeHTTP(w, r)
+			return
+		}
 		for _, p := range o.Routes {
 			if strings.HasPrefix(r.URL.Path, p) {
-				h.ServeHTTP(w, r)
+				own.ServeHTTP(w, r)
 				return
 			}
 		}
