@@ -1,0 +1,45 @@
+{
+  "name": "@jespino/agentstudio",
+  "version": "0.1.0",
+  "description": "The frontend of an agent studio: backend transport, agent terminal, project screens, source editor and layout",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./web/src/index.ts",
+    "./styles.css": "./web/styles.css",
+    "./vite": {
+      "types": "./web/vite.d.ts",
+      "default": "./web/vite.js"
+    }
+  },
+  "files": [
+    "web"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "@codemirror/state": "^6.5.0",
+    "@codemirror/view": "^6.35.0",
+    "@wailsio/runtime": "^3.0.0",
+    "@xterm/addon-fit": ">=0.10.0",
+    "@xterm/xterm": ">=5.5.0",
+    "react": "^19.0.0",
+    "react-resizable-panels": "^4.0.0",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@codemirror/state": "6.7.6",
+    "@codemirror/view": "6.43.14",
+    "@types/react": "19.3.0",
+    "@wailsio/runtime": "3.0.0",
+    "@xterm/addon-fit": "0.11.0",
+    "@xterm/xterm": "6.0.0",
+    "react": "19.3.1",
+    "react-resizable-panels": "4.14.5",
+    "typescript": "^5.7.2",
+    "zustand": "5.0.15",
+    "vitest": "5.0.5"
+  }
+}
