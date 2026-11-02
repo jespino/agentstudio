@@ -1,12 +1,12 @@
 // Package agentctx writes the context files that coding agents (Claude Code,
-// Codex, Gemini CLI, Antigravity, …) read when they start in a project
+// Codex, OpenCode, Antigravity, …) read when they start in a project
 // folder, so an agent launched from a studio's terminal panel knows the
 // studio's language and how to check its work:
 //
 //	AGENTS.md                  the studio's managed block; whatever the user
 //	                           writes outside it is kept
-//	CLAUDE.md, GEMINI.md       "@AGENTS.md", only if missing
-//	.agents/skills/<name>/     the skill, where Codex, Gemini CLI and
+//	CLAUDE.md                  "@AGENTS.md", only if missing
+//	.agents/skills/<name>/     the skill, where Codex, OpenCode and
 //	                           Antigravity look for it
 //	.claude/skills/<name>/     the same skill again, for Claude Code
 //	any other Files            generated (a language reference, …)
@@ -33,7 +33,7 @@ type Context struct {
 	// Agents is the content of the managed block of AGENTS.md.
 	Agents []byte
 	// Imports are files created with "@AGENTS.md" when missing, for agents
-	// that read their own file. Nil means CLAUDE.md and GEMINI.md.
+	// that read their own file. Nil means CLAUDE.md.
 	Imports []string
 	// Skill is the agent skill: its files (SKILL.md, references, …) by name,
 	// written to .agents/skills/<SkillName>/ and .claude/skills/<SkillName>/.
@@ -45,7 +45,7 @@ type Context struct {
 }
 
 // skillRoots are the folders agents look for skills in: .agents/skills is the
-// shared one (Codex, Gemini CLI, Antigravity); Claude Code only reads
+// shared one (Codex, OpenCode, Antigravity); Claude Code only reads
 // .claude/skills. Each gets a real copy, not a link, so the folder works on
 // any system and survives being copied around.
 var skillRoots = []string{".agents", ".claude"}
@@ -68,7 +68,7 @@ func Write(dir string, c Context) error {
 	}
 	imports := c.Imports
 	if imports == nil {
-		imports = []string{"CLAUDE.md", "GEMINI.md"}
+		imports = []string{"CLAUDE.md"}
 	}
 	for _, name := range imports {
 		p := filepath.Join(dir, name)

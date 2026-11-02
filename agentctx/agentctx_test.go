@@ -41,8 +41,8 @@ func TestWriteKeepsUserContent(t *testing.T) {
 	if b, _ := os.ReadFile(filepath.Join(dir, "CLAUDE.md")); string(b) != "mine\n" {
 		t.Fatalf("CLAUDE.md overwritten: %q", b)
 	}
-	if b, _ := os.ReadFile(filepath.Join(dir, "GEMINI.md")); string(b) != "@AGENTS.md\n" {
-		t.Fatalf("GEMINI.md: %q", b)
+	if _, err := os.Stat(filepath.Join(dir, "GEMINI.md")); !os.IsNotExist(err) {
+		t.Fatal("GEMINI.md was written")
 	}
 	for p, want := range map[string]string{
 		".demo/docs/DSL.md":                "# DSL\n",
@@ -66,6 +66,16 @@ func TestWriteKeepsUserContent(t *testing.T) {
 	agents, _ = os.ReadFile(filepath.Join(dir, "AGENTS.md"))
 	if s := string(agents); strings.Count(s, begin) != 1 || strings.Contains(s, "talk.demo") || !strings.Contains(s, "New text.") || !strings.HasPrefix(s, "# My notes\n") {
 		t.Fatalf("AGENTS.md after an update:\n%s", s)
+	}
+}
+
+func TestWriteCreatesImports(t *testing.T) {
+	dir := t.TempDir()
+	if err := Write(dir, Context{ID: "demo", Product: "Demo Studio", Agents: []byte("x\n")}); err != nil {
+		t.Fatal(err)
+	}
+	if b, _ := os.ReadFile(filepath.Join(dir, "CLAUDE.md")); string(b) != "@AGENTS.md\n" {
+		t.Fatalf("CLAUDE.md: %q", b)
 	}
 }
 

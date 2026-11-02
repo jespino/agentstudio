@@ -1,4 +1,4 @@
-// Package terminal runs agent harnesses (Claude Code, Codex, Gemini CLI, …)
+// Package terminal runs agent harnesses (Claude Code, Codex, OpenCode, …)
 // or a shell in pseudo-terminals for a studio's agent panel. Output is
 // streamed as events; a scrollback buffer lets the panel reattach after a
 // reload.
@@ -50,7 +50,7 @@ func DefaultHarnesses() []Harness {
 	hs := []Harness{
 		{ID: "claude", Name: "Claude Code", Command: "claude", ResumeArgs: []string{"--resume"}},
 		{ID: "codex", Name: "Codex", Command: "codex", ResumeArgs: []string{"resume"}},
-		{ID: "gemini", Name: "Gemini CLI", Command: "gemini", ResumeArgs: []string{"--resume"}},
+		{ID: "opencode", Name: "OpenCode", Command: "opencode", ResumeArgs: []string{"--continue"}},
 		{ID: "agy", Name: "Antigravity", Command: "agy"},
 		{ID: "shell", Name: "Shell", Command: shell},
 	}
@@ -63,7 +63,7 @@ func DefaultHarnesses() []Harness {
 
 // ForResume returns h launched so that it continues a saved conversation of
 // the folder it runs in: Claude Code and Codex open their session picker,
-// Gemini CLI continues the latest session.
+// OpenCode continues the latest session.
 func (h Harness) ForResume() (Harness, error) {
 	if len(h.ResumeArgs) == 0 {
 		return Harness{}, fmt.Errorf("%s cannot resume conversations", h.Name)

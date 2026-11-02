@@ -67,7 +67,7 @@ func TestMergeEnv(t *testing.T) {
 }
 
 func TestForResume(t *testing.T) {
-	want := map[string]string{"claude": "--resume", "codex": "resume", "gemini": "--resume"}
+	want := map[string]string{"claude": "--resume", "codex": "resume", "opencode": "--continue"}
 	for _, h := range DefaultHarnesses() {
 		h.Args = []string{"--flag"}
 		r, err := h.ForResume()

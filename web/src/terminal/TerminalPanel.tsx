@@ -27,7 +27,7 @@ export interface TerminalPanelProps {
 
 /**
  * The agent panel: an embedded terminal running an agent harness (Claude
- * Code, Codex, Gemini CLI, …) in the project folder. The agent edits the
+ * Code, Codex, OpenCode, …) in the project folder. The agent edits the
  * project; the studio picks the changes up live.
  *
  * Theme: --term-bg, --term-fg, --term-selection and --accent (the cursor).
@@ -234,7 +234,7 @@ export function TerminalPanel({ title = 'Agent', intro }: TerminalPanelProps) {
               <button
                 onClick={() => start(harness, true)}
                 disabled={!current.available || starting}
-                title={harness === 'gemini' ? 'Continue the latest conversation in this project' : 'Choose a previous conversation of this project to continue'}
+                title={harness === 'opencode' ? 'Continue the latest conversation in this project' : 'Choose a previous conversation of this project to continue'}
               >
                 Resume
               </button>

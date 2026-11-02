@@ -8,10 +8,10 @@ the other. [Kino Studio](https://github.com/jespino/kino), agtrip, Agave and
 A studio brings its language, its preview and its own API; agentstudio
 brings the rest, the same everywhere:
 
-- the agent terminal: Claude Code, Codex, Gemini CLI, Antigravity or a shell in
+- the agent terminal: Claude Code, Codex, OpenCode, Antigravity or a shell in
   the project folder, with **Resume** for agents that keep conversations, the
   studio's command first on the agent's `PATH`, and the context files agents
-  read (AGENTS.md, CLAUDE.md, GEMINI.md, the skill in `.agents/skills` and
+  read (AGENTS.md, CLAUDE.md, the skill in `.agents/skills` and
   `.claude/skills`) written before it starts;
 - projects: open / new / close, recent projects, native folder dialogs, a
   folder browser for browsers, and for one-file projects the file watcher
