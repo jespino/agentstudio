@@ -1,5 +1,7 @@
 // Lets other panels type into the active terminal (e.g. "@media/clip.mp4"
 // from the Media panel).
+import { toggleAgent } from '../layout/agent';
+
 type Sink = (text: string) => boolean;
 let sink: Sink | null = null;
 
@@ -50,13 +52,18 @@ export function agentInput(prompt: string): string {
 export async function askActiveAgent(prompt: string): Promise<boolean> {
   const current = agent;
   if (!current) return false;
+  toggleAgent(true); // what it answers must be seen
   await current.send(prompt);
   current.focus();
   return true;
 }
 
 export function focusAgentPanel() {
-  const panel = document.querySelector<HTMLElement>('.terminal');
-  panel?.scrollIntoView({ block: 'nearest' });
-  panel?.querySelector<HTMLSelectElement>('select')?.focus();
+  toggleAgent(true);
+  // a folded panel can't take the focus until it has been drawn open
+  requestAnimationFrame(() => {
+    const panel = document.querySelector<HTMLElement>('.terminal');
+    panel?.scrollIntoView({ block: 'nearest' });
+    panel?.querySelector<HTMLSelectElement>('select')?.focus();
+  });
 }

@@ -40,6 +40,7 @@ export { SourceEditor, type LineMark, type SourceEditorProps } from './source/So
 export { SourcePanel, type SourcePanelProps, type SourceProblem } from './source/SourcePanel';
 export { revealLine, SourceButton, toggleSource, useSourceOpen } from './source/state';
 export { StudioLayout, type StudioLayoutProps } from './layout/StudioLayout';
+export { AgentButton, isAgentOpen, toggleAgent, useAgentOpen } from './layout/agent';
 export { askAgent, useAskAgent, type AskAgent } from './terminal/ask';
 export { dismissToast, toast, Toaster } from './toast';
 export { saveFile } from './save';

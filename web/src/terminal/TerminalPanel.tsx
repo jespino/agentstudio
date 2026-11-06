@@ -5,6 +5,7 @@ import '@xterm/xterm/css/xterm.css';
 import { EVENT_TERMINAL_DATA, EVENT_TERMINAL_EXIT, EVENT_TERMINAL_START, type Harness } from '../api';
 import { errorText } from '../backend';
 import { storage, studioConfig } from '../config';
+import { AgentFoldButton } from '../layout/agent';
 import { agentInput, setActiveAgent, setTerminalSink } from './bus';
 
 function decode(b64: string): Uint8Array {
@@ -244,6 +245,7 @@ export function TerminalPanel({ title = 'Agent', intro }: TerminalPanelProps) {
             </button>
           </>
         )}
+        <AgentFoldButton />
       </div>
       {error && <div className="error small">{error}</div>}
       <div className="terminal-host-wrap">

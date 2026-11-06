@@ -245,6 +245,59 @@ button.link:hover:not(:disabled) {
   background: var(--accent);
 }
 
+/* The agent panel of a collapsible StudioLayout */
+.agent-panel {
+  position: relative;
+  overflow: hidden;
+}
+.agent-slot {
+  height: 100%;
+}
+.agent-slot[inert] {
+  visibility: hidden;
+}
+.agent-rail {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  color: var(--text-muted);
+  background: var(--panel);
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+}
+.agent-rail:hover {
+  color: var(--text);
+  background: var(--panel-2);
+}
+.agent-fold {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 26px;
+  padding: 0;
+  color: var(--text-muted);
+}
+.agent-fold:hover {
+  color: var(--text);
+}
+.agent-rail-label {
+  writing-mode: vertical-rl;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+.agent-rail i {
+  width: 7px;
+  height: 7px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
 /* Agent terminal */
 .terminal-host-wrap {
   flex: 1;

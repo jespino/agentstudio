@@ -97,6 +97,10 @@ folder projects, `Base` lists, reads and writes the project's files
 (`SourceFiles`, `ReadSource`, `WriteSource`) and `SourceChanged` sends the
 agent's edits to the panel.
 
+`<StudioLayout collapsible>` lets the agent panel fold to a rail on the right,
+with an icon in its header, `AgentButton` / Ctrl+3 or `toggleAgent()`; the choice is remembered, the
+agent keeps running and keeps its terminal size, and asking it opens the panel.
+
 Besides the components: `toast()` with `<Toaster />`, `askAgent()` and
 `useAskAgent()` (send an error to the running agent), `saveFile()`,
 `createSourceSaver()` and `onWorkspace()` for one-file projects, and
@@ -118,8 +122,8 @@ export default defineConfig({ server: { proxy: studioProxy({ backend: 'http://12
 ## Using it
 
 ```sh
-go get github.com/jespino/agentstudio@v0.3.0
-npm install github:jespino/agentstudio#v0.3.0   # with allow-git=root in the project's .npmrc (npm 12)
+go get github.com/jespino/agentstudio@v0.5.0
+npm install github:jespino/agentstudio#v0.5.0   # with allow-git=root in the project's .npmrc (npm 12)
 ```
 
 To work on agentstudio and a studio together, point the studio at the local

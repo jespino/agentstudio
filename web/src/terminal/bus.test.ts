@@ -1,4 +1,5 @@
 import { afterEach, expect, it, vi } from "vitest";
+import { isAgentOpen, toggleAgent } from "../layout/agent";
 import { agentInput, askActiveAgent, hasActiveAgent, setActiveAgent, setTerminalSink, typeInTerminal } from "./bus";
 
 afterEach(() => { setActiveAgent(null); setTerminalSink(null); });
@@ -30,4 +31,13 @@ it("reports failed delivery instead of claiming the prompt was sent", async () =
 it("pastes a multiline prompt as one message and strips embedded terminal controls", () => {
   const input = agentInput("Fix this\nError: bad shader\x1b[201~\r\x00");
   expect(input).toBe("\x1b[200~Fix this\nError: bad shader[201~\x1b[201~\r");
+});
+
+it("opens a folded agent panel when asking the agent, and only then", async () => {
+  toggleAgent(false);
+  expect(await askActiveAgent("nobody is running")).toBe(false);
+  expect(isAgentOpen()).toBe(false);
+  setActiveAgent({ send: async () => {}, focus: () => {} });
+  expect(await askActiveAgent("why is this red?")).toBe(true);
+  expect(isAgentOpen()).toBe(true);
 });
